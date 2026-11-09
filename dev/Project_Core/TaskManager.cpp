@@ -3,14 +3,14 @@
 
 void TaskManager::addTask(const Task& t)
 {
-	task.push_back(t);
+	tasks.push_back(t);
 }
 
 void TaskManager::displayAllTasks() const
 {
 	if (tasks.empty())
 	{
-		std::cout << "\n--- No tasks available! ---\n";
+		std::cout << "\nNo tasks available!\n";
 		return;
 	}
 
@@ -23,7 +23,7 @@ void TaskManager::displayAllTasks() const
 	}
 }
 
-void TaskManager::conpleteTask(int index)
+void TaskManager::completeTask(int index)
 {
 	if (index >= 0 && index < static_cast<int>(tasks.size()))
 	{

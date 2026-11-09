@@ -12,8 +12,10 @@ private:
 
 public:
 	void addTask(const Task& t);
-	void displayAllTask() const;
-	void conpleteTask(int index);
+	void displayAllTasks() const;
+	void completeTask(int index);
 	int getTaskCount() const;
 
 };
+
+#endif

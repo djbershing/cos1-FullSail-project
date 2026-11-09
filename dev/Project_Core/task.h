@@ -7,12 +7,12 @@ class Task
 {
 private:
 	std::string title;
-	std::string decsription;
+	std::string description;
 	int priority;
 	bool isCompleted;
 
 public:
-	task(std::string t, std::string d, int p);
+	Task(std::string t, std::string d, int p);
 
 	//getters
 	std::string getTitle() const;

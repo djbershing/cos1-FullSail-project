@@ -11,7 +11,7 @@ private:
 
 	//helper functions
 	void displayMenu() const;
-	int getValidIntergerInput() const;
+	int getValidIntegerInput() const;
 	void handleAddTask();
 	void handleCompleteTask();
 
