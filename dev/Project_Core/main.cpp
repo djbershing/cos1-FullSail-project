@@ -1,8 +1,9 @@
+#include "TaskManager.h"
 #include "MenuController.h"
 
-int main()
-{
-	MenuController app;
-	app.run();
+int main() {
+	TaskManager manager("tasks.txt");
+	MenuController menu(manager);
+	menu.run();
 	return 0;
 }

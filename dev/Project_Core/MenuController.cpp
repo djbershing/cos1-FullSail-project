@@ -2,23 +2,23 @@
 #include <iostream>
 #include <limits>
 
-MenuController::MenuController() : running(true) {}
+MenuController::MenuController(TaskManager& taskManager) : manager(taskManager) {}
 
-void MenuController::displayMenu() const
-{
-	std::cout << "\n---TERMINAL TASK MANAGER ---\n"
-		<< "1. View Tasks\n"
-		<< "2. Add Task\n"
-		<< "3. Complete a Task\n"
-		<< "4. Exit\n"
-		<< "5. Select an Option: ";
+void MenuController::displayMenu() const {
+	std::cout << "\n==============================\n";
+	std::cout << " TERMINAL TASK MANAGER \n";
+	std::cout << "==============================\n";
+	std::cout << "1. View Tasks\n";
+	std::cout << "2. Add Task\n";
+	std::cout << "3. Complete a Task\n";
+	std::cout << "4. Delete a Task\n";
+	std::cout << "5. Exit\n";
+	std::cout << "Select an Option: ";
 }
 
-int MenuController::getValidIntegerInput() const
-{
+int MenuController::getValidIntegerInput() const {
 	int choice;
-	while (!(std::cin >> choice))
-	{
+	while (!(std::cin >> choice)) {
 		std::cin.clear();
 		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 		std::cout << "Invalid input. Please enter a valid number: ";
@@ -27,47 +27,78 @@ int MenuController::getValidIntegerInput() const
 	return choice;
 }
 
-void MenuController::handleAddTask()
-{
-	std::string title, desc;
-	int priority;
+int MenuController::promptForTaskIndex(const std::string& actionLabel) const {
+	manager.displayAllTasks();
+	if (manager.getTaskCount() == 0) {
+		return -1;
+	}
+	std::cout << "\nEnter the number of the task to " << actionLabel << " (or 0 to cancel): ";
+	int choice = getValidIntegerInput();
+	if (choice == 0) {
+		std::cout << "Action canceled.\n";
+		return -1;
+	}
+	return choice - 1;
+}
 
-	std::cout << "Enter task title: ";
-	std::getline(std::cin, title);
+void MenuController::handleAddTask() {
+	std::string title, desc;
+	int priority = 1;
+
+	do {
+		std::cout << "Enter task title: ";
+		std::getline(std::cin, title);
+		if (title.empty()) {
+			std::cout << "Title cannot be empty.\n";
+		}
+	} while (title.empty());
 
 	std::cout << "Enter task description: ";
 	std::getline(std::cin, desc);
 
-	do
-	{
+	do {
 		std::cout << "Enter priority (1 = Low, 2 = Medium, 3 = High): ";
 		priority = getValidIntegerInput();
+		if (priority < 1 || priority > 3) {
+			std::cout << "Priority must be 1, 2, or 3.\n";
+		}
 	} while (priority < 1 || priority > 3);
 
 	manager.addTask(Task(title, desc, priority));
-	std::cout << "\nTask added successfully!\n";
+	std::cout << "\nTask added and saved successfully!\n";
 }
 
-void MenuController::handleCompleteTask()
-{
-	manager.displayAllTasks();
-	if (manager.getTaskCount() == 0) return;
+void MenuController::handleCompleteTask() {
+	int index = promptForTaskIndex("complete");
+	if (index == -1) return;
 
-	std::cout << "Enter the number of the task to complete: ";
-	int choice = getValidIntegerInput();
-
-	manager.completeTask(choice - 1);
+	if (manager.completeTask(index)) {
+		std::cout << "Task marked as completed!\n";
+	}
+	else {
+		std::cout << "Invalid task number.\n";
+	}
 }
 
-void MenuController::run()
-{
-	while (running)
-	{
+void MenuController::handleDeleteTask() {
+	int index = promptForTaskIndex("delete");
+	if (index == -1) return;
+
+	if (manager.deleteTask(index)) {
+		std::cout << "Task deleted successfully!\n";
+	}
+	else {
+		std::cout << "Invalid task number.\n";
+	}
+}
+
+void MenuController::run() {
+	bool running = true;
+	while (running) {
 		displayMenu();
 		int choice = getValidIntegerInput();
 
-		switch (choice)
-		{
+		switch (choice) {
 		case 1:
 			manager.displayAllTasks();
 			break;
@@ -78,11 +109,16 @@ void MenuController::run()
 			handleCompleteTask();
 			break;
 		case 4:
-			std::cout << "\nGoodbye!\n";
+			handleDeleteTask();
+			break;
+		case 5:
+			manager.saveToFile();
+			std::cout << "Tasks saved. Exiting Terminal Task Manager. Goodbye!\n";
 			running = false;
 			break;
 		default:
-			std::cout << "\nInvalid choice, please choose option 1-4.\n";
+			std::cout << "Invalid option. Please choose between 1 and 5.\n";
+			break;
 		}
 	}
 }
