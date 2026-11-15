@@ -2,20 +2,29 @@
 #define TASKMANAGER_H
 
 #include <vector>
-#include "task.h"
+#include <string>
+#include "Task.h"
 
-class TaskManager
-{
+class TaskManager {
 private:
 	std::vector<Task> tasks;
+	std::string storageFile;
 
+	bool isValidIndex(int index) const;
 
 public:
-	void addTask(const Task& t);
-	void displayAllTasks() const;
-	void completeTask(int index);
-	int getTaskCount() const;
+	explicit TaskManager(const std::string& filename = "tasks.txt");
 
+	void addTask(const Task& task);
+	bool completeTask(int index);
+	bool deleteTask(int index);
+	void displayAllTasks() const;
+
+	int getTaskCount() const;
+	int getCompletedCount() const;
+
+	bool saveToFile() const;
+	bool loadFromFile();
 };
 
 #endif
