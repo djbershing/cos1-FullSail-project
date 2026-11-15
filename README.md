@@ -52,7 +52,19 @@ My next stand up will go here...
 
 ### Week 3
 
-Stay tuned, this stand up is coming soon...
+markdown
+---
+
+## Milestone 3 Project Stand-Up
+
+* **What Was Completed:**
+* Implemented persistent file I/O (`tasks.txt`) using `Task::serialize()` / `Task::deserialize()` and `TaskManager::saveToFile()` / `loadFromFile()`.
+* Added task deletion (`MenuController::handleDeleteTask()` and `TaskManager::deleteTask()`), priority labels, and a live `Completed/Total` summary counter.
+* Refactored `MenuController` to centralize integer and index input validation, enforced `const`-correctness across all classes, standardized `Task.h` naming, and fixed the menu numbering typo.
+* **Current Status:**
+* All Milestone 3 issues (#12–#15) are implemented, compiled, and verified on the `dev` branch and ready for Pull Request review into `main`.
+* **Blockers & Next Steps:**
+* No current blockers. Next steps include adding task editing and priority/status filtering in Milestone 4.
 
 ### Week 4
 
