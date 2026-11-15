@@ -3,22 +3,21 @@
 
 #include "TaskManager.h"
 
-class MenuController
-{
+class MenuController {
 private:
-	TaskManager manager;
-	bool running;
+	TaskManager& manager;
 
-	//helper functions
 	void displayMenu() const;
 	int getValidIntegerInput() const;
+	int promptForTaskIndex(const std::string& actionLabel) const;
+
 	void handleAddTask();
 	void handleCompleteTask();
+	void handleDeleteTask();
 
 public:
-	MenuController();
+	explicit MenuController(TaskManager& taskManager);
 	void run();
-
 };
 
 #endif
