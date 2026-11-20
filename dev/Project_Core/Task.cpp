@@ -33,12 +33,29 @@ Task Task::deserialize(const std::string& line) {
 	std::stringstream ss(line);
 	std::string completedStr, priorityStr, title, description;
 
-	std::getline(ss, completedStr, '|');
-	std::getline(ss, priorityStr, '|');
-	std::getline(ss, title, '|');
+	if (!std::getline(ss, completedStr, '|') ||
+		!std::getline(ss, priorityStr, '|') ||
+		!std::getline(ss, title, '|')) {
+		return Task("Corrupted Task Entry", "Invalid save format", 1, false);
+	}
 	std::getline(ss, description);
 
 	bool isDone = (completedStr == "1");
-	int prio = priorityStr.empty() ? 1 : std::stoi(priorityStr);
+	int prio = 1;
+
+	try {
+		prio = std::stoi(priorityStr);
+		if (prio < 1 || prio > 3) {
+			prio = 1;
+		}
+	}
+	catch (const std::exception&) {
+		prio = 1;
+	}
+
+	if (title.empty()) {
+		title = "Untitled Task";
+	}
+
 	return Task(title, description, prio, isDone);
 }
