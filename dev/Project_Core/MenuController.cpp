@@ -17,14 +17,24 @@ void MenuController::displayMenu() const {
 }
 
 int MenuController::getValidIntegerInput() const {
-	int choice;
-	while (!(std::cin >> choice)) {
-		std::cin.clear();
-		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+	std::string input;
+	while (true) {
+		std::getline(std::cin, input);
+		try {
+			size_t pos = 0;
+			int choice = std::stoi(input, &pos);
+			if (pos == input.length()) {
+				return choice;
+			}
+		}
+		catch (const std::invalid_argument&) {
+			// Non-numeric input
+		}
+		catch (const std::out_of_range&) {
+			// Number too large for int
+		}
 		std::cout << "Invalid input. Please enter a valid number: ";
 	}
-	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-	return choice;
 }
 
 int MenuController::promptForTaskIndex(const std::string& actionLabel) const {
@@ -51,18 +61,18 @@ void MenuController::handleAddTask() {
 		if (title.empty()) {
 			std::cout << "Title cannot be empty.\n";
 		}
-	} while (title.empty());
-
-	std::cout << "Enter task description: ";
-	std::getline(std::cin, desc);
+		else if (title.find('|') != std::string::npos) {
+			std::cout << "Title cannot contain the '|' character.\n";
+		}
+	} while (title.empty() || title.find('|') != std::string::npos);
 
 	do {
-		std::cout << "Enter priority (1 = Low, 2 = Medium, 3 = High): ";
-		priority = getValidIntegerInput();
-		if (priority < 1 || priority > 3) {
-			std::cout << "Priority must be 1, 2, or 3.\n";
+		std::cout << "Enter task description: ";
+		std::getline(std::cin, desc);
+		if (desc.find('|') != std::string::npos) {
+			std::cout << "Description cannot contain the '|' character.\n";
 		}
-	} while (priority < 1 || priority > 3);
+	} while (desc.find('|') != std::string::npos);
 
 	manager.addTask(Task(title, desc, priority));
 	std::cout << "\nTask added and saved successfully!\n";
